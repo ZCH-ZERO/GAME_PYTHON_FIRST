@@ -7,3 +7,7 @@ class Settings():
 		self.screen_width = 1200
 		self.screen_height = 800
 		self.bg_color = (230,230,230)
+
+		# 飞船的设置---设置飞船的速度----这里的改动是将ship_speed_factor的初始值设置为1.5
+		# 							------需要飞船移动时，我们将移动1.5像素而不是 1 像素
+		self.ship_speed_factor = 1.5
