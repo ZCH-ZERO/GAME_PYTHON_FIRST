@@ -1,0 +1,3 @@
+创建Pygame窗口  alien_invasion.py
+
+创建设置类  Settings.py
