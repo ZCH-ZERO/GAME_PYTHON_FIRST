@@ -17,7 +17,7 @@ class Bullet(Sprite):
 		self.y = float(self.rect.y)
 
 		self.color = ai_settings.bullet_color
-		self.speed_factor = ai_settings.bullet_speed_factor
+		self.speed_factor = ai_settings.bullet_speed_factor + 10
 
 
 	def update(self):
@@ -29,5 +29,5 @@ class Bullet(Sprite):
 
 
 	def draw_bullet(self):
-		"""在屏幕上一直子弹"""
+		"""在屏幕上绘制子弹"""
 		pygame.draw.rect(self.screen, self.color, self.rect)
