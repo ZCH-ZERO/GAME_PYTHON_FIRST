@@ -26,7 +26,7 @@ class Alien(Sprite):
         self.screen.blit(self.image, self.rect)
 
     def update(self):
-        """想做或向右移动外星人"""
+        """向左或向右移动外星人"""
         self.x += (self.ai_settings.alien_speed_factor *
                             self.ai_settings.fleet_direction)
         """向右移动外星人"""

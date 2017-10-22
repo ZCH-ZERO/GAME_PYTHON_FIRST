@@ -28,7 +28,7 @@ def check_keyup_events(event, ship):
     if event.key == pygame.K_LEFT:
         ship.moving_left = False
 
-def check_events(ai_settings, screen, ship, bullets):
+def check_events(ai_settings, screen, stats, play_button, ship, aliens, bullets):
     """"响应按键和鼠标事件"""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -40,8 +40,38 @@ def check_events(ai_settings, screen, ship, bullets):
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, ship)
 
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            check_play_button(ai_settings, screen, stats, play_button,
+                              ship, aliens, bullets, mouse_x, mouse_y)
 
-def update_screen(ai_settings, screen, ship, aliens, bullets):
+def check_play_button(ai_settings, screen, stats, play_button, ship, aliens,
+                      bullets, mouse_x, mouse_y):
+    """在玩家单击Play按钮时开始新游戏"""
+    """
+        Play按钮存在一个问题， 那就是即便Play按钮不可见， 
+        玩家单击其原来所在的区域时， 游戏依然会作出响应
+        修复这个问题， 可让游戏仅在game_active 为False 时才开始：
+    """
+    button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
+    # if play_button.rect.collidepoint(mouse_x, mouse_y):
+    if button_clicked and not stats.game_active:
+        # 隐藏光标 mouse.set_visible(False)  Pygame在光标位于游戏窗口内时将其隐藏起来。
+        pygame.mouse.set_visible(False)
+        # 重置游戏统计信息
+        stats.reset_stats()
+        stats.game_active = True
+
+        # 清空外星人列表和子弹列表
+        aliens.empty()
+        bullets.empty()
+
+        # 创建一群新的外星人， 并让飞船居中
+        create_fleet(ai_settings, screen, ship, aliens)
+        ship.center_ship()
+
+
+def update_screen(ai_settings, screen, stats, ship, aliens, bullets, play_button):
     """"更新屏幕上的图像，并切换到屏幕上"""
     # 每次循环时都重绘屏幕
     screen.fill(ai_settings.bg_color)
@@ -51,6 +81,10 @@ def update_screen(ai_settings, screen, ship, aliens, bullets):
 
     ship.blitme()
     aliens.draw(screen)
+
+    # 如果游戏处于非活动状态，就绘制Play按钮
+    if not stats.game_active:
+        play_button.draw_button()
 
     #让最近绘制的屏幕可见
     pygame.display.flip()
@@ -189,6 +223,8 @@ def ship_hit(ai_settings, stats, screen, ship, aliens, bullets):
         sleep(0.5)
     else:
         stats.game_active = False
+        # 游戏结束后 将光标显示
+        pygame.mouse.set_visible(True)
 
 
 def check_aliens_bottom(ai_settings, stats, screen, ship, aliens, bullets):
